@@ -7,43 +7,41 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.pxlweavr.drivr.MainScreen">
+    tools:context="com.pxlweavr.drivr.MainScreen"
+    android:id="@+id/layout">
 
     <TextView
-    android:id="@+id/label"
+    android:id="@+id/status_label"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:text="Type here:" />
-
-    <EditText
-        android:id="@+id/entry"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/label"
-        android:background="@android:drawable/editbox_background" />
+    android:text="Status" />
 
     <Button
         android:id="@+id/open"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/entry"
         android:layout_marginLeft="10dip"
-        android:text="Open" />
-
-    <Button
-        android:id="@+id/send"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/open"
-        android:layout_toLeftOf="@id/open"
-        android:text="Send" />
+        android:text="Open"
+        android:layout_below="@id/status_label" />
 
     <Button
         android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/send"
-        android:layout_toLeftOf="@id/send"
-        android:text="Close" />
+        android:text="Close"
+        android:layout_alignTop="@id/open"
+        android:layout_toLeftOf="@id/open" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Output"
+        android:id="@+id/output_label"
+        android:layout_below="@+id/close"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/open"
+        android:layout_alignEnd="@+id/open" />
 </RelativeLayout>

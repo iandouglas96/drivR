@@ -3,39 +3,40 @@ package com.pxlweavr.drivr;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.EditText;
 import android.widget.Button;
 import java.io.IOException;
 import java.util.Set;
-import java.util.UUID;
 
 public class MainScreen extends Activity {
-    TextView myLabel;
-    EditText myTextbox;
-    BluetoothAdapter mBluetoothAdapter;
-    BluetoothDevice mmDevice;
+    TextView statusLabel;
+    TextView outputLabel;
 
+    BluetoothAdapter obdAdapter;
+    BluetoothDevice obdDevice;
+
+    /**
+     * @brief Method called when the app initially starts up.  Configures UI
+     * @param savedInstanceState Initial device state
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
+        //Connect up to our I/O
         Button openButton = (Button) findViewById(R.id.open);
         Button closeButton = (Button) findViewById(R.id.close);
-        myLabel = (TextView) findViewById(R.id.label);
-        myTextbox = (EditText) findViewById(R.id.entry);
+        statusLabel = (TextView) findViewById(R.id.status_label);
+        outputLabel = (TextView) findViewById(R.id.output_label);
 
         //Open Button
         openButton.setOnClickListener(new View.OnClickListener() {
@@ -59,66 +60,82 @@ public class MainScreen extends Activity {
         });
     }
 
+    /**
+     * @brief Pause the app by unregistering from our Bluetooth handler
+     */
     @Override
     protected void onPause() {
         // Unregister since the activity is paused.
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(
-                mMessageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(dataReceiver);
         super.onPause();
     }
 
+    /**
+     * @brief When we resume, reconnect to the Bluetooth handler
+     */
     @Override
     protected void onResume() {
-        // Register to receive messages.
-        // We are registering an observer (mMessageReceiver) to receive Intents
-        // with actions named "custom-event-name".
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                mMessageReceiver, new IntentFilter("custom-event-name"));
+        //Register to receive Messages from our BluetoothHandler
+        LocalBroadcastManager.getInstance(this).registerReceiver(dataReceiver, new IntentFilter("OBD_Data"));
         super.onResume();
     }
 
+    /**
+     * @brief Search through the paired devices and connect to the appropriate one
+     */
     void findBT() {
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            myLabel.setText("No bluetooth adapter available");
+        obdAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (obdAdapter == null) {
+            statusLabel.setText("No bluetooth adapter available");
         }
 
-        if (!mBluetoothAdapter.isEnabled()) {
+        if (!obdAdapter.isEnabled()) {
             Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBluetooth, 0);
         }
 
-        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        Set<BluetoothDevice> pairedDevices = obdAdapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
                 if (device.getName().equals("IANMBP")) {
-                    mmDevice = device;
-                    myLabel.setText("Bluetooth Device Found");
+                    obdDevice = device;
+                    statusLabel.setText("Bluetooth Device Found");
                     break;
                 }
             }
-            if (myLabel.getText() != "Bluetooth Device Found") {
-                myLabel.setText("IANMBP not found");
+            if (statusLabel.getText() != "Bluetooth Device Found") {
+                statusLabel.setText("IANMBP not found");
             }
         } else {
-            myLabel.setText("No Devices Paired");
+            statusLabel.setText("No Devices Paired");
         }
     }
 
+    /**
+     * @brief Connect to Bluetooth device, and start BluetoothHandler service
+     * @throws IOException
+     */
     void openBT() throws IOException {
         Intent intent = new Intent(this, BluetoothHandler.class);
-        intent.putExtra("device", mmDevice);
+        intent.putExtra("device", obdDevice);
         startService(intent);
 
-        myLabel.setText("Bluetooth Opened");
+        statusLabel.setText("Bluetooth Opened");
     }
 
+    /**
+     * @brief Stop the BluetoothHandler service
+     * @throws IOException
+     */
     void closeBT() throws IOException {
         stopService(new Intent(this, BluetoothHandler.class));
-        myLabel.setText("Bluetooth Closed");
+        statusLabel.setText("Bluetooth Closed");
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    /**
+     * @brief The receiver for data coming from bluetooth.
+     */
+    private BroadcastReceiver dataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
