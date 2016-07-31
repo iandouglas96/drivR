@@ -14,34 +14,45 @@
     android:id="@+id/status_label"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:text="Status" />
+    android:text="No Device Selected" />
 
     <Button
         android:id="@+id/open"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="10dip"
         android:text="Open"
-        android:layout_below="@id/status_label" />
+        android:layout_below="@+id/status_label"
+        android:layout_toRightOf="@+id/close"
+        android:layout_toEndOf="@+id/close" />
 
     <Button
         android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Close"
-        android:layout_alignTop="@id/open"
-        android:layout_toLeftOf="@id/open" />
+        android:layout_below="@+id/status_label"
+        android:layout_toRightOf="@+id/select_device"
+        android:layout_toEndOf="@+id/select_device" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Device"
+        android:id="@+id/select_device"
+        android:layout_above="@+id/output_label"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Output"
+        android:text="No Data Received"
         android:id="@+id/output_label"
         android:layout_below="@+id/close"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/open"
         android:layout_alignEnd="@+id/open" />
+
 </RelativeLayout>

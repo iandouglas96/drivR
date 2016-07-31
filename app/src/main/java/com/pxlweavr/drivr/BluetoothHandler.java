@@ -19,18 +19,18 @@ import java.util.UUID;
 import java.io.InputStream;
 
 /**
- * @brief Class to handle reading and parsing data from the OBDIIC&C
+ * Class to handle reading and parsing data from the OBDIIC&C
  */
 public class BluetoothHandler extends Service {
     /**
-     * @brief Pointer to bluetooth device we are talking to
+     * Pointer to bluetooth device we are talking to
      */
     private BluetoothDevice device;
 
     private Handler handler;
 
     /**
-     * @brief Thread managing receiving bluetooth packets
+     * Thread managing receiving bluetooth packets
      */
     Thread btThread = new Thread() {
         @Override
@@ -96,7 +96,7 @@ public class BluetoothHandler extends Service {
     };
 
     /**
-     * @brief Required callback for Service, we don't need to do anything
+     *  Required callback for Service, we don't need to do anything
      * @param intent
      * @return
      */
@@ -127,7 +127,7 @@ public class BluetoothHandler extends Service {
     }
 
     /**
-     * @brief Called on startup of the Service
+     * Called on startup of the Service
      * @param intent Includes data of the device we need to connect to
      * @param flags
      * @param startId
@@ -145,7 +145,7 @@ public class BluetoothHandler extends Service {
     }
 
     /**
-     * @brief Send parsed data back to the UI layer
+     * Send parsed data back to the UI layer
      * @param msg The raw string read in from the BT dongle to parse
      */
     private void sendMessage(String msg) {
@@ -157,7 +157,7 @@ public class BluetoothHandler extends Service {
     }
 
     /**
-     * @brief Called to destroy the Service.  Stop the BT thread.
+     * Called to destroy the Service.  Stop the BT thread.
      */
     @Override
     public void onDestroy() {

@@ -14,17 +14,19 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Button;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
 public class MainScreen extends Activity {
+    private static final int DEVICE_SELECT = 1;
+
     TextView statusLabel;
     TextView outputLabel;
 
-    BluetoothAdapter obdAdapter;
-    BluetoothDevice obdDevice;
+    BluetoothDevice obdDevice = null;
 
     /**
-     * @brief Method called when the app initially starts up.  Configures UI
+     * Method called when the app initially starts up.  Configures UI
      * @param savedInstanceState Initial device state
      */
     @Override
@@ -35,6 +37,7 @@ public class MainScreen extends Activity {
         //Connect up to our I/O
         Button openButton = (Button) findViewById(R.id.open);
         Button closeButton = (Button) findViewById(R.id.close);
+        Button selectDeviceButton = (Button) findViewById(R.id.select_device);
         statusLabel = (TextView) findViewById(R.id.status_label);
         outputLabel = (TextView) findViewById(R.id.output_label);
 
@@ -42,9 +45,9 @@ public class MainScreen extends Activity {
         openButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    findBT();
                     openBT();
                 } catch (IOException ex) {
+                    Log.d("", "Could not open connection");
                 }
             }
         });
@@ -55,13 +58,29 @@ public class MainScreen extends Activity {
                 try {
                     closeBT();
                 } catch (IOException ex) {
+                    Log.d("", "Could not close connection");
                 }
+            }
+        });
+
+        //Select device button
+        selectDeviceButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showDeviceSelect();
             }
         });
     }
 
     /**
-     * @brief Pause the app by unregistering from our Bluetooth handler
+     * Start the Device Select Screen for a result
+     */
+    private void showDeviceSelect() {
+        Intent deviceSelectIntent = new Intent(this, DeviceSelectScreen.class);
+        startActivityForResult(deviceSelectIntent, DEVICE_SELECT);
+    }
+
+    /**
+     * Pause the app by unregistering from our Bluetooth handler
      */
     @Override
     protected void onPause() {
@@ -71,7 +90,7 @@ public class MainScreen extends Activity {
     }
 
     /**
-     * @brief When we resume, reconnect to the Bluetooth handler
+     * When we resume, reconnect to the Bluetooth handler
      */
     @Override
     protected void onResume() {
@@ -81,38 +100,7 @@ public class MainScreen extends Activity {
     }
 
     /**
-     * @brief Search through the paired devices and connect to the appropriate one
-     */
-    void findBT() {
-        obdAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (obdAdapter == null) {
-            statusLabel.setText("No bluetooth adapter available");
-        }
-
-        if (!obdAdapter.isEnabled()) {
-            Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBluetooth, 0);
-        }
-
-        Set<BluetoothDevice> pairedDevices = obdAdapter.getBondedDevices();
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                if (device.getName().equals("IANMBP")) {
-                    obdDevice = device;
-                    statusLabel.setText("Bluetooth Device Found");
-                    break;
-                }
-            }
-            if (statusLabel.getText() != "Bluetooth Device Found") {
-                statusLabel.setText("IANMBP not found");
-            }
-        } else {
-            statusLabel.setText("No Devices Paired");
-        }
-    }
-
-    /**
-     * @brief Connect to Bluetooth device, and start BluetoothHandler service
+     * Connect to Bluetooth device, and start BluetoothHandler service
      * @throws IOException
      */
     void openBT() throws IOException {
@@ -124,7 +112,7 @@ public class MainScreen extends Activity {
     }
 
     /**
-     * @brief Stop the BluetoothHandler service
+     * Stop the BluetoothHandler service
      * @throws IOException
      */
     void closeBT() throws IOException {
@@ -133,7 +121,7 @@ public class MainScreen extends Activity {
     }
 
     /**
-     * @brief The receiver for data coming from bluetooth.
+     * The receiver for data coming from bluetooth.
      */
     private BroadcastReceiver dataReceiver = new BroadcastReceiver() {
         @Override
@@ -141,6 +129,35 @@ public class MainScreen extends Activity {
             // Get extra data included in the Intent
             String message = intent.getStringExtra("message");
             Log.d("receiver", "Got message: " + message);
+            outputLabel.setText(message);
         }
     };
+
+    /**
+     * Handle data returned by other activities
+     * @param requestCode The activity code we are getting data from
+     * @param resultCode The result of the activity
+     * @param data Data returned from the activity
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case (DEVICE_SELECT): {
+                if (resultCode == Activity.RESULT_OK) {
+                    //Read in the data
+                    try {
+                        closeBT();
+                    } catch (IOException ioe) {
+                        Log.d("", ioe.getMessage());
+                    }
+                    obdDevice = (BluetoothDevice) data.getParcelableExtra("device");
+                    statusLabel.setText(obdDevice.getName() + " Selected");
+                } else {
+                    statusLabel.setText("No Device Selected");
+                }
+                break;
+            }
+        }
+    }
 }
