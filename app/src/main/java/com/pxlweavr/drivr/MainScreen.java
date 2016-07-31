@@ -15,6 +15,10 @@ import android.widget.TextView;
 import android.widget.Button;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Set;
 
 public class MainScreen extends Activity {
@@ -22,6 +26,7 @@ public class MainScreen extends Activity {
 
     TextView statusLabel;
     TextView outputLabel;
+    TextView timeLabel;
 
     BluetoothDevice obdDevice = null;
 
@@ -40,6 +45,7 @@ public class MainScreen extends Activity {
         Button selectDeviceButton = (Button) findViewById(R.id.select_device);
         statusLabel = (TextView) findViewById(R.id.status_label);
         outputLabel = (TextView) findViewById(R.id.output_label);
+        timeLabel = (TextView) findViewById(R.id.time_label);
 
         //Open Button
         openButton.setOnClickListener(new View.OnClickListener() {
@@ -126,12 +132,42 @@ public class MainScreen extends Activity {
     private BroadcastReceiver dataReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            String message = intent.getStringExtra("message");
-            Log.d("receiver", "Got message: " + message);
-            outputLabel.setText(message);
+            Log.d("receiver", "Got message");
+
+            //Get data included in the Intent
+            ArrayList<Integer> data = intent.getIntegerArrayListExtra("data");
+            //Get timestamp
+            Long time = intent.getLongExtra("time", -1);
+
+            displayData(data, time);
         }
     };
+
+    /**
+     * Display the data to the user in the UI
+     * @param data ArrayList of the data from the OBDIIC&C
+     * @param time Timestamp in ms from epoch of data
+     */
+    private void displayData(ArrayList<Integer> data, Long time) {
+        String outputString = "";
+        //Format data
+        for (Integer num : data) {
+            outputString += (num.toString() + ", ");
+        }
+
+        if (data.size() > 0) {
+            outputLabel.setText(outputString);
+        } else {
+            outputLabel.setText("Invalid Data Format");
+        }
+
+        //Format time
+        Date date = new Date(time);
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+        String dateFormatted = formatter.format(date);
+
+        timeLabel.setText(dateFormatted);
+    }
 
     /**
      * Handle data returned by other activities

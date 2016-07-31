@@ -15,6 +15,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.io.InputStream;
 
@@ -150,10 +151,52 @@ public class BluetoothHandler extends Service {
      */
     private void sendMessage(String msg) {
         Log.d("sender", "Broadcasting message");
+
+        //Parse data, get Intent
+        Intent data = parseData(msg);
+
+        LocalBroadcastManager.getInstance(this).sendBroadcast(data);
+    }
+
+    /**
+     * Parse the raw string from the OBDIIC&C into an Intent
+     * @param data The raw string of data from the OBDIIC&C
+     * @return Timestamped intent with parsed data attached
+     */
+    private Intent parseData(String data) {
         Intent intent = new Intent("OBD_Data");
-        // You can also include some extra data.
-        intent.putExtra("message", msg);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+        //Parse message from OBDIIC&C
+        //Remove leading characters
+        data = data.replace("DATA,TIME,", "");
+        String[] dataArr = data.split(",");
+
+        ArrayList<Integer> parsedArr = new ArrayList<Integer>();
+        try {
+            //Each single data entry is 2 comma separated values (+,- or space, then value)
+            for (int i = 0; i < dataArr.length; i += 2) {
+                String sign = dataArr[i];
+                String val = dataArr[i + 1];
+                Integer num = Integer.parseInt(val);
+                if (sign.equals("-")) {
+                    //flip sign
+                    num *= -1;
+                }
+
+                //Add number to array
+                parsedArr.add(num);
+            }
+        } catch (Exception e) {
+            //Bad data somehow
+            parsedArr.clear();
+        }
+
+        //Load up the data
+        intent.putExtra("data", parsedArr);
+        //Timestamp the data
+        intent.putExtra("time", System.currentTimeMillis());
+
+        return intent;
     }
 
     /**
