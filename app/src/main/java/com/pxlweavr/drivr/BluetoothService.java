@@ -22,7 +22,7 @@ import java.io.InputStream;
 /**
  * Class to handle reading and parsing data from the OBDIIC&C
  */
-public class BluetoothHandler extends Service {
+public class BluetoothService extends Service {
     /**
      * Pointer to bluetooth device we are talking to
      */
@@ -103,7 +103,7 @@ public class BluetoothHandler extends Service {
      */
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO Auto-generated method stub
+        // Don't do anything special
         return null;
     }
 

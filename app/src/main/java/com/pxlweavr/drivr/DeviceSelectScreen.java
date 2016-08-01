@@ -6,9 +6,11 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -17,52 +19,71 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class DeviceSelectScreen extends AppCompatActivity {
+public class DeviceSelectScreen extends Fragment {
+    BluetoothController btCallback;
+
+    /**
+     * Interface to the Main activity to run Bluetooth
+     */
+    public interface BluetoothController {
+        public void openBT(BluetoothDevice bd);
+        public void closeBT();
+    }
+
     private ListView deviceSelector;
     private TextView statusLabel;
     ArrayList<BluetoothDevice> devicesList;
 
+    /**
+     * Called when the fragment attaches to an Activity
+     * @param activity The activity we just attached to
+     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        btCallback = (BluetoothController) activity;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_select_screen);
+        View rootView = inflater.inflate(R.layout.activity_device_select_screen, container, false);
 
-        deviceSelector = (ListView) findViewById(R.id.device_selector);
-        statusLabel = (TextView) findViewById(R.id.status_label);
+        deviceSelector = (ListView) rootView.findViewById(R.id.device_selector);
 
-        Button cancel = (Button) findViewById(R.id.cancel);
-        Button select = (Button) findViewById(R.id.select);
+        Button connectButton = (Button) rootView.findViewById(R.id.connect_button);
+        Button disconnectButton = (Button) rootView.findViewById(R.id.disconnect_button);
+        Button scanButton = (Button) rootView.findViewById(R.id.scan_button);
 
-        //Quit immediately
-        cancel.setOnClickListener(new View.OnClickListener() {
+        connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setResult(Activity.RESULT_CANCELED);
-                finish();
+                int devicePos = deviceSelector.getCheckedItemPosition();
+                BluetoothDevice device = devicesList.get(devicePos);
+
+                btCallback.closeBT();
+                btCallback.openBT(device);
             }
         });
 
-        //Select and return the chosen device
-        select.setOnClickListener(new View.OnClickListener() {
+        disconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Is anything even selected?
-                if (deviceSelector.getCheckedItemCount() == 1) {
-                    int devicePos = deviceSelector.getCheckedItemPosition();
-                    BluetoothDevice device = devicesList.get(devicePos);
+                btCallback.closeBT();
+            }
+        });
 
-                    //Return the selected device
-                    Intent returnDeviceIntent = new Intent();
-                    returnDeviceIntent.putExtra("device", device);
-                    setResult(Activity.RESULT_OK, returnDeviceIntent);
-                    finish();
-                } else {
-                    showError("No Device Selected");
-                }
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scanForDevices();
             }
         });
 
         scanForDevices();
+
+        return rootView;
     }
 
     /**
@@ -70,7 +91,7 @@ public class DeviceSelectScreen extends AppCompatActivity {
      * @param msg The string to show to the user
      */
     private void showError(String msg) {
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
         alertDialog.setTitle("Error");
         alertDialog.setMessage(msg);
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -106,7 +127,7 @@ public class DeviceSelectScreen extends AppCompatActivity {
         devicesList = new ArrayList<BluetoothDevice>();
         devicesList.addAll(devicesSet);
 
-        BluetoothDeviceAdapter arrayAdapter = new BluetoothDeviceAdapter(this, devicesList);
+        BluetoothDeviceAdapter arrayAdapter = new BluetoothDeviceAdapter(getActivity(), devicesList);
         deviceSelector.setAdapter(arrayAdapter);
     }
 }
