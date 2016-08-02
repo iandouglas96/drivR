@@ -28,6 +28,7 @@ public class DeviceSelectScreen extends Fragment {
     public interface BluetoothController {
         public void openBT(BluetoothDevice bd);
         public void closeBT();
+        public void showError(String msg);
     }
 
     private ListView deviceSelector;
@@ -48,10 +49,13 @@ public class DeviceSelectScreen extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Load the appropriate layout
         View rootView = inflater.inflate(R.layout.activity_device_select_screen, container, false);
 
+        //SHow device list
         deviceSelector = (ListView) rootView.findViewById(R.id.device_selector);
 
+        //Connect buttons to listeners
         Button connectButton = (Button) rootView.findViewById(R.id.connect_button);
         Button disconnectButton = (Button) rootView.findViewById(R.id.disconnect_button);
         Button scanButton = (Button) rootView.findViewById(R.id.scan_button);
@@ -59,11 +63,16 @@ public class DeviceSelectScreen extends Fragment {
         connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int devicePos = deviceSelector.getCheckedItemPosition();
-                BluetoothDevice device = devicesList.get(devicePos);
+                //Do we have something valid selected?
+                if (deviceSelector.getCheckedItemCount() == 1) {
+                    int devicePos = deviceSelector.getCheckedItemPosition();
+                    BluetoothDevice device = devicesList.get(devicePos);
 
-                btCallback.closeBT();
-                btCallback.openBT(device);
+                    btCallback.closeBT();
+                    btCallback.openBT(device);
+                } else {
+                    btCallback.showError("No Device Selected");
+                }
             }
         });
 
@@ -84,23 +93,6 @@ public class DeviceSelectScreen extends Fragment {
         scanForDevices();
 
         return rootView;
-    }
-
-    /**
-     * Display simple error message to the user
-     * @param msg The string to show to the user
-     */
-    private void showError(String msg) {
-        AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-        alertDialog.setTitle("Error");
-        alertDialog.setMessage(msg);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
     }
 
     /**

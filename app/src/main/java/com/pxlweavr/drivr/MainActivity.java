@@ -2,9 +2,11 @@ package com.pxlweavr.drivr;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -81,11 +83,15 @@ public class MainActivity extends AppCompatActivity implements DeviceSelectScree
      * Connect to Bluetooth device, and start BluetoothService service
      */
     public void openBT(BluetoothDevice bd) {
-        Intent intent = new Intent(this, BluetoothService.class);
-        intent.putExtra("device", bd);
-        startService(intent);
+        if (bd != null) {
+            Intent intent = new Intent(this, BluetoothService.class);
+            intent.putExtra("device", bd);
+            startService(intent);
 
-        statusLabel.setText("Bluetooth Opened");
+            statusLabel.setText("Bluetooth Opened");
+        } else {
+            showError("No Device Selected");
+        }
     }
 
     /**
@@ -112,4 +118,22 @@ public class MainActivity extends AppCompatActivity implements DeviceSelectScree
         dashboardFragment.displayData(data, time);
         }
     };
+
+    /**
+     * Display simple error message to the user
+     * @param msg The string to show to the user
+     */
+     @Override
+     public void showError(String msg) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Error");
+        alertDialog.setMessage(msg);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
 }
