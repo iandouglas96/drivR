@@ -136,7 +136,12 @@ public class BluetoothService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        device = (BluetoothDevice)intent.getParcelableExtra("device");
+        if (intent != null) {
+            device = (BluetoothDevice) intent.getParcelableExtra("device");
+        } else {
+            //WE can't start without a device
+            return START_FLAG_RETRY;
+        }
 
         handler = new Handler();
 
@@ -204,6 +209,7 @@ public class BluetoothService extends Service {
      */
     @Override
     public void onDestroy() {
+        Log.d("", "Quitting :(");
         btThread.interrupt();
     }
 }
