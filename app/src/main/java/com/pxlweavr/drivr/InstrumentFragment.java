@@ -1,5 +1,6 @@
 package com.pxlweavr.drivr;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -19,6 +20,19 @@ public class InstrumentFragment extends Fragment {
     TextView dataLabel;
     TextView nameLabel;
     RelativeLayout layout;
+
+    private DashboardScreen.StreamController streamController;
+
+    /**
+     * Called when the fragment attaches to an Activity
+     * @param activity The activity we just attached to
+     */
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        streamController = (DashboardScreen.StreamController) activity;
+    }
 
     public void setData(DataStream d) {
         data = d;
@@ -44,7 +58,7 @@ public class InstrumentFragment extends Fragment {
         rootView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                layout.setBackgroundColor(0xFFCCCCCC);
+                streamController.selectStream(data);
 
                 return true;
             }
@@ -53,8 +67,22 @@ public class InstrumentFragment extends Fragment {
         return rootView;
     }
 
+    public void select(boolean selected) {
+        if (selected) {
+            //gray
+            layout.setBackgroundColor(0xFFCCCCCC);
+        } else {
+            //transparent
+            layout.setBackgroundColor(0x00CCCCCC);
+        }
+    }
+
     public void refresh() {
         dataLabel.setText(data.getLastEntry().toString());
         nameLabel.setText(data.getName());
+    }
+
+    public DataStream getData() {
+        return data;
     }
 }

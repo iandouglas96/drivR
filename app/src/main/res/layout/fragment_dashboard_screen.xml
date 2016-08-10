@@ -16,7 +16,7 @@
         android:text="Add"
         android:id="@+id/add_instrument"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentStart="true" />
 
     <GridLayout
         android:layout_width="match_parent"
@@ -27,4 +27,12 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/add_instrument" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:id="@+id/delete_instrument"
+        android:layout_below="@+id/dash_layout"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

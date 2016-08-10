@@ -71,6 +71,14 @@ public class MainActivity extends FragmentActivity implements DeviceSelectScreen
         return stream;
     }
 
+    public void selectStream(DataStream ds) {
+        dashboardFragment.selectStream(ds);
+    }
+
+    public void deleteStream(DataStream ds) {
+        data.remove(ds);
+    }
+
     /**
      * Pause the app by unregistering from our Bluetooth handler
      */

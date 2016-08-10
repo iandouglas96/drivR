@@ -28,11 +28,15 @@ public class DashboardScreen extends Fragment {
     private TextView timeLabel;
     private StreamController streamController;
 
+    private InstrumentFragment selectedInstrument;
+
     private GridLayout layout;
     private ArrayList<InstrumentFragment> instruments = new ArrayList<InstrumentFragment>();
 
     public interface StreamController {
         public DataStream createStream();
+        public void selectStream(DataStream ds);
+        public void deleteStream(DataStream ds);
     }
 
     /**
@@ -79,7 +83,37 @@ public class DashboardScreen extends Fragment {
             }
         });
 
+        Button delete = (Button) rootView.findViewById(R.id.delete_instrument);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Make sure we have selected something
+                if (selectedInstrument != null) {
+                    //Delete associated data stream
+                    streamController.deleteStream(selectedInstrument.getData());
+
+                    FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+
+                    instruments.remove(selectedInstrument);
+                    ft.remove(selectedInstrument);
+
+                    ft.commit();
+                }
+            }
+        });
+
         return rootView;
+    }
+
+    public void selectStream(DataStream ds) {
+        for (InstrumentFragment i : instruments) {
+            if (i.getData() == ds) {
+                selectedInstrument = i;
+                i.select(true);
+            } else {
+                i.select(false);
+            }
+        }
     }
 
     public void refreshInstruments() {
