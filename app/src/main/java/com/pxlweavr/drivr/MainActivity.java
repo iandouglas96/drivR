@@ -90,9 +90,9 @@ public class MainActivity extends FragmentActivity implements DeviceSelectScreen
     }
 
     @Override
-    protected void onStop() {
+    protected void onDestroy() {
+        super.onDestroy();
         closeBT();
-        super.onStop();
     }
 
     /**

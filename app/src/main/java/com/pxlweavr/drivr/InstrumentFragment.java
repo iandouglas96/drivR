@@ -55,12 +55,10 @@ public class InstrumentFragment extends Fragment {
         dataLabel = (TextView) rootView.findViewById(R.id.data_label);
         layout = (RelativeLayout) rootView.findViewById(R.id.background_layout);
 
-        rootView.setOnLongClickListener(new View.OnLongClickListener() {
+        rootView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View view) {
+            public void onClick(View view) {
                 streamController.selectStream(data);
-
-                return true;
             }
         });
 

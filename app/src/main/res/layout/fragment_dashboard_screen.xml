@@ -35,4 +35,12 @@
         android:id="@+id/delete_instrument"
         android:layout_below="@+id/dash_layout"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        android:id="@+id/edit_instrument"
+        android:layout_below="@+id/dash_layout"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

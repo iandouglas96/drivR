@@ -1,6 +1,7 @@
 package com.pxlweavr.drivr;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
@@ -102,7 +103,40 @@ public class DashboardScreen extends Fragment {
             }
         });
 
+        Button edit = (Button) rootView.findViewById(R.id.edit_instrument);
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Make sure we have selected something
+                if (selectedInstrument != null) {
+                    Intent i = new Intent(getActivity(), InstrumentSettingsActivity.class);
+                    i.putExtra("name", selectedInstrument.getData().getName());
+                    i.putExtra("abbrev", selectedInstrument.getData().getAbbrev());
+                    i.putExtra("format", selectedInstrument.getData().getFormat());
+                    i.putExtra("channel", selectedInstrument.getData().getChannel());
+
+                    startActivityForResult(i, 2);
+                }
+            }
+        });
+
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 2) {
+            if (resultCode == Activity.RESULT_OK) {
+                super.onActivityResult(requestCode, resultCode, data);
+
+                selectedInstrument.getData().setName(data.getStringExtra("name"));
+                selectedInstrument.getData().setAbbrev(data.getStringExtra("abbrev"));
+                selectedInstrument.getData().setIndex(data.getIntExtra("channel", 0));
+                selectedInstrument.getData().setFormat(data.getIntExtra("format", 0));
+
+                refreshInstruments();
+            }
+        }
     }
 
     public void selectStream(DataStream ds) {
