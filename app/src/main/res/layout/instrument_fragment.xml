@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="100dp" android:layout_height="100dp"
-    android:paddingTop="15dp"
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:padding="7dp"
     android:id="@+id/background_layout">
 
     <TextView
@@ -11,7 +11,8 @@
         android:text="No Data"
         android:id="@+id/name_label"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textColor="#FF555555" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,6 +22,7 @@
         android:id="@+id/data_label"
         android:clickable="false"
         android:layout_below="@+id/name_label"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold" />
 
 </RelativeLayout>

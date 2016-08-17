@@ -1,12 +1,16 @@
 package com.pxlweavr.drivr;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -66,6 +70,14 @@ public class InstrumentFragment extends Fragment {
         if (data != null) {
             nameLabel.setText(data.getName());
         }
+
+        //Hacky way of forcing even layout
+        //Probably a beter way of doing this
+        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        layout.setMinimumWidth((size.x-60)/3);
 
         return rootView;
     }
