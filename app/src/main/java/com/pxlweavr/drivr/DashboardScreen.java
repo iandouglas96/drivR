@@ -142,6 +142,12 @@ public class DashboardScreen extends Fragment {
         return rootView;
     }
 
+    /**
+     * Handle data returned by the InstrumentSettingsActivity and load it into the DataStream
+     * @param requestCode The code we used to initiate the activity we are now returning from
+     * @param resultCode The status of the result
+     * @param data The data returned by the settings activity
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 2) {
@@ -159,6 +165,10 @@ public class DashboardScreen extends Fragment {
         }
     }
 
+    /**
+     * Select one of the datastreams
+     * @param ds The datastream to select
+     */
     public void selectStream(DataStream ds) {
         for (InstrumentFragment i : instruments) {
             if (i.getData() == ds) {

@@ -82,6 +82,10 @@ public class InstrumentFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Set this instruments displayed selection state
+     * @param selected true if the instrument is selected
+     */
     public void select(boolean selected) {
         if (selected) {
             //gray
