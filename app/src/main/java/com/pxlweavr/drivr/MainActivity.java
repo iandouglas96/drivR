@@ -3,6 +3,7 @@ package com.pxlweavr.drivr;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.database.Cursor;
 import android.support.v4.app.FragmentTransaction;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -38,6 +39,7 @@ public class MainActivity extends FragmentActivity implements DeviceSelectScreen
     private TabLayout tabLayout;
 
     private ArrayList<DataStream> data;
+    private DataStreamDbHelper dataStreamDb;
 
     /**
      * Method called when the app initially starts up.  Configures UI
@@ -49,7 +51,15 @@ public class MainActivity extends FragmentActivity implements DeviceSelectScreen
         setContentView(R.layout.activity_main_screen);
 
         data = new ArrayList<DataStream>();
-        data.add(new DataStream("D1", 0, 10.0, 1000));
+        dataStreamDb = new DataStreamDbHelper(this);
+        Cursor cursor = dataStreamDb.getDataStreams();
+        cursor.moveToFirst();
+
+        //Iterate through the db and get datastreams
+        while (!cursor.isAfterLast()) {
+            data.add(dataStreamDb.getDataStreamAtCursor(cursor));
+            cursor.moveToNext();
+        }
 
         statusLabel = (TextView) findViewById(R.id.status_label);
 
@@ -68,6 +78,7 @@ public class MainActivity extends FragmentActivity implements DeviceSelectScreen
     public DataStream createStream() {
         DataStream stream = new DataStream();
         data.add(stream);
+        dataStreamDb.insertDataStream(stream);
         return stream;
     }
 
@@ -76,7 +87,16 @@ public class MainActivity extends FragmentActivity implements DeviceSelectScreen
     }
 
     public void deleteStream(DataStream ds) {
+        dataStreamDb.deleteDataStream(ds);
         data.remove(ds);
+    }
+
+    public void updateStream(DataStream ds) {
+        dataStreamDb.insertDataStream(ds);
+    }
+
+    public ArrayList<DataStream> getStreams() {
+        return data;
     }
 
     /**

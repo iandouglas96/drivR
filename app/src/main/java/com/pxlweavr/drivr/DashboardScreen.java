@@ -36,6 +36,8 @@ public class DashboardScreen extends Fragment {
 
     public interface StreamController {
         public DataStream createStream();
+        public ArrayList<DataStream> getStreams();
+        public void updateStream(DataStream ds);
         public void selectStream(DataStream ds);
         public void deleteStream(DataStream ds);
     }
@@ -66,6 +68,23 @@ public class DashboardScreen extends Fragment {
 
         //Connect up to our I/O
         layout = (GridLayout) rootView.findViewById(R.id.dash_layout);
+
+        //Are we out of sync?
+        if (instruments.size() == 0) {
+            ArrayList<DataStream> streams = streamController.getStreams();
+            for (DataStream stream : streams) {
+                FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+
+                InstrumentFragment instrument = new InstrumentFragment();
+                instruments.add(instrument);
+                ft.add(layout.getId(), instrument);
+
+                //Create data for the instrument to display
+                instrument.setData(stream);
+
+                ft.commit();
+            }
+        }
 
         Button add = (Button) rootView.findViewById(R.id.add_instrument);
         add.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +153,7 @@ public class DashboardScreen extends Fragment {
                 selectedInstrument.getData().setIndex(data.getIntExtra("channel", 0));
                 selectedInstrument.getData().setFormat(data.getIntExtra("format", 0));
 
+                streamController.updateStream(selectedInstrument.getData());
                 refreshInstruments();
             }
         }

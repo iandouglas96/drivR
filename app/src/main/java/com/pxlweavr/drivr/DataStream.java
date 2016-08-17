@@ -11,20 +11,29 @@ import java.util.Date;
  * Created by IanDMiller on 8/8/16.
  */
 public class DataStream {
+    private static Integer numStreams = 0;
+
     private Integer index;
     private LineGraphSeries<DataPoint> points;
     private Double lastEntry;
     private Double divisor;
     private Integer maxValuesStored;
     private String abbrev;
+    private Integer id;
 
-    public DataStream(String n, Integer i, Double d, Integer mvs) {
+    public DataStream(String n, String a, Integer i, Integer f, Integer mvs, Integer idNum) {
         points = new LineGraphSeries<DataPoint>();
         points.setTitle(n);
+        abbrev = a;
         index = i;
-        divisor = d;
+        setFormat(f);
         maxValuesStored = mvs;
         abbrev = n;
+        id = idNum;
+
+        if (id >= numStreams) {
+            numStreams = id+1;
+        }
     }
 
     public DataStream() {
@@ -33,6 +42,7 @@ public class DataStream {
         index = 0;
         divisor = 1.0;
         maxValuesStored = 1000;
+        id = numStreams++;
     }
 
     /**
@@ -114,6 +124,10 @@ public class DataStream {
 
     public String getAbbrev() {
         return abbrev;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public Double getLastEntry() {
