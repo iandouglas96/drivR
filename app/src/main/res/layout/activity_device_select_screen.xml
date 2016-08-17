@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/device_selector"
         android:choiceMode="singleChoice"
-        android:drawSelectorOnTop="true"
+        android:drawSelectorOnTop="false"
         android:listSelector="@drawable/bt_display_selector"
         android:layout_below="@+id/status_label"
         android:layout_alignParentLeft="true"
