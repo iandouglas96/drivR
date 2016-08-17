@@ -28,7 +28,6 @@ public class DataStream {
         index = i;
         setFormat(f);
         maxValuesStored = mvs;
-        abbrev = n;
         id = idNum;
 
         if (id >= numStreams) {

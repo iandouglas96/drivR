@@ -62,6 +62,11 @@ public class InstrumentFragment extends Fragment {
             }
         });
 
+        //If we have data, load up data
+        if (data != null) {
+            nameLabel.setText(data.getName());
+        }
+
         return rootView;
     }
 
