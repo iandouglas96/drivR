@@ -34,14 +34,6 @@ public class DashboardScreen extends Fragment {
     private GridLayout layout;
     private ArrayList<InstrumentFragment> instruments = new ArrayList<InstrumentFragment>();
 
-    public interface StreamController {
-        public DataStream createStream();
-        public ArrayList<DataStream> getStreams();
-        public void updateStream(DataStream ds);
-        public void selectStream(DataStream ds);
-        public void deleteStream(DataStream ds);
-    }
-
     /**
      * Called when the fragment attaches to an Activity
      * @param activity The activity we just attached to

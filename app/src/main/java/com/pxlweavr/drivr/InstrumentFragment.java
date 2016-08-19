@@ -25,7 +25,7 @@ public class InstrumentFragment extends Fragment {
     TextView nameLabel;
     RelativeLayout layout;
 
-    private DashboardScreen.StreamController streamController;
+    private StreamController streamController;
 
     /**
      * Called when the fragment attaches to an Activity
@@ -35,7 +35,7 @@ public class InstrumentFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        streamController = (DashboardScreen.StreamController) activity;
+        streamController = (StreamController) activity;
     }
 
     public void setData(DataStream d) {

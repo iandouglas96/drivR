@@ -8,10 +8,11 @@ import android.support.v4.app.FragmentPagerAdapter;
  * Created by IanDMiller on 8/1/16.
  */
 public class TabsPagerAdapter extends FragmentPagerAdapter {
-    private String[] tabNames = {"Connect", "Dashboard"};
+    private String[] tabNames = {"Connect", "Dashboard", "Graph"};
 
     Fragment deviceSelectFragment;
     Fragment dashboardFragment;
+    Fragment graphFragment;
 
     /**
      * Default constructor
@@ -19,11 +20,12 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
      * @param dss The Device Selection fragment
      * @param ds The Dashboard fragment
      */
-    public TabsPagerAdapter(FragmentManager fm, DeviceSelectScreen dss, DashboardScreen ds) {
+    public TabsPagerAdapter(FragmentManager fm, DeviceSelectScreen dss, DashboardScreen ds, GraphScreen gs) {
         super(fm);
 
         deviceSelectFragment = dss;
         dashboardFragment = ds;
+        graphFragment = gs;
     }
 
     /**
@@ -39,6 +41,8 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
                 return deviceSelectFragment;
             case 1:
                 return dashboardFragment;
+            case 2:
+                return graphFragment;
         }
         return null;
     }
@@ -49,7 +53,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
      */
     @Override
     public int getCount() {
-        return 2;
+        return tabNames.length;
     }
 
     /**

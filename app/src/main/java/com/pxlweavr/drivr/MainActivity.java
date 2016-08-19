@@ -28,9 +28,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MainActivity extends FragmentActivity implements DeviceSelectScreen.BluetoothController, DashboardScreen.StreamController {
+public class MainActivity extends FragmentActivity implements DeviceSelectScreen.BluetoothController, StreamController {
     DeviceSelectScreen deviceSelectFragment;
     DashboardScreen dashboardFragment;
+    GraphScreen graphFragment;
 
     private TextView statusLabel;
 
@@ -68,8 +69,9 @@ public class MainActivity extends FragmentActivity implements DeviceSelectScreen
 
         deviceSelectFragment = new DeviceSelectScreen();
         dashboardFragment = new DashboardScreen();
+        graphFragment = new GraphScreen();
 
-        tabAdapter = new TabsPagerAdapter(getSupportFragmentManager(), deviceSelectFragment, dashboardFragment);
+        tabAdapter = new TabsPagerAdapter(getSupportFragmentManager(), deviceSelectFragment, dashboardFragment, graphFragment);
 
         viewPager.setAdapter(tabAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -79,6 +81,7 @@ public class MainActivity extends FragmentActivity implements DeviceSelectScreen
         DataStream stream = new DataStream();
         data.add(stream);
         dataStreamDb.insertDataStream(stream);
+        graphFragment.addData(stream);
         return stream;
     }
 
@@ -89,6 +92,7 @@ public class MainActivity extends FragmentActivity implements DeviceSelectScreen
     public void deleteStream(DataStream ds) {
         dataStreamDb.deleteDataStream(ds);
         data.remove(ds);
+        graphFragment.removeData(ds);
     }
 
     public void updateStream(DataStream ds) {

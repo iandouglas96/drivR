@@ -20,9 +20,12 @@ public class DataStream {
     private Integer maxValuesStored;
     private String abbrev;
     private Integer id;
+    private ArrayList<Integer> buffer;
+    private Integer bufferSize = 20;
 
     public DataStream(String n, String a, Integer i, Integer f, Integer mvs, Integer idNum) {
         points = new LineGraphSeries<DataPoint>();
+        buffer = new ArrayList<Integer>();
         points.setTitle(n);
         abbrev = a;
         index = i;
@@ -37,6 +40,7 @@ public class DataStream {
 
     public DataStream() {
         points = new LineGraphSeries<DataPoint>();
+        buffer = new ArrayList<Integer>();
         points.setTitle("new");
         index = 0;
         divisor = 1.0;
@@ -51,11 +55,29 @@ public class DataStream {
      */
     public void addData(ArrayList<Integer> rawData, Long timePoint) {
         //Parse the date
-        Date date = new Date(timePoint);
-        Double parsedData = (rawData.get(index)/divisor);
-        lastEntry = parsedData;
-        //Add new data point to the plot or what have you
-        points.appendData(new DataPoint(date, parsedData), true, maxValuesStored);
+        buffer.add(rawData.get(index));
+
+        lastEntry = rawData.get(index) / divisor;
+
+        if (buffer.size() > bufferSize) {
+            Date date = new Date(timePoint);
+            Double parsedData = (calculateAverage(buffer) / divisor);
+            buffer.clear();
+
+            //Add new data point to the plot or what have you
+            points.appendData(new DataPoint(date, parsedData), true, maxValuesStored);
+        }
+    }
+
+    private Double calculateAverage(ArrayList <Integer> marks) {
+        Integer sum = 0;
+        if(!marks.isEmpty()) {
+            for (Integer mark : marks) {
+                sum += mark;
+            }
+            return sum.doubleValue() / marks.size();
+        }
+        return sum.doubleValue();
     }
 
     private Integer parseFormat(Double div) {
