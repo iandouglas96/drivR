@@ -1,11 +1,14 @@
 package com.pxlweavr.drivr;
 
+import android.graphics.Color;
+
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.Series;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by IanDMiller on 8/8/16.
@@ -21,9 +24,9 @@ public class DataStream {
     private String abbrev;
     private Integer id;
     private ArrayList<Integer> buffer;
-    private Integer bufferSize = 20;
+    private Integer bufferSize;
 
-    public DataStream(String n, String a, Integer i, Integer f, Integer mvs, Integer idNum) {
+    public DataStream(String n, String a, Integer i, Integer f, Integer mvs, Integer idNum, Integer bs, Integer c) {
         points = new LineGraphSeries<DataPoint>();
         buffer = new ArrayList<Integer>();
         points.setTitle(n);
@@ -32,6 +35,8 @@ public class DataStream {
         setFormat(f);
         maxValuesStored = mvs;
         id = idNum;
+        bufferSize = bs;
+        points.setColor(c);
 
         if (id >= numStreams) {
             numStreams = id+1;
@@ -39,6 +44,7 @@ public class DataStream {
     }
 
     public DataStream() {
+        //default values
         points = new LineGraphSeries<DataPoint>();
         buffer = new ArrayList<Integer>();
         points.setTitle("new");
@@ -46,6 +52,10 @@ public class DataStream {
         divisor = 1.0;
         maxValuesStored = 1000;
         id = numStreams++;
+        bufferSize = 20;
+
+        Random rnd = new Random();
+        points.setColor(Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)));
     }
 
     /**
@@ -126,6 +136,10 @@ public class DataStream {
         }
     }
 
+    public void setBufferSize(Integer bs) {
+        bufferSize = bs;
+    }
+
     //Getters
     public Integer getFormat() {
         return parseFormat(divisor);
@@ -149,6 +163,10 @@ public class DataStream {
 
     public Integer getId() {
         return id;
+    }
+
+    public Integer getBufferSize() {
+        return bufferSize;
     }
 
     public Double getLastEntry() {

@@ -123,6 +123,7 @@ public class DashboardScreen extends Fragment {
                     Intent i = new Intent(getActivity(), InstrumentSettingsActivity.class);
                     i.putExtra("name", selectedInstrument.getData().getName());
                     i.putExtra("abbrev", selectedInstrument.getData().getAbbrev());
+                    i.putExtra("buffer_size", selectedInstrument.getData().getBufferSize().toString());
                     i.putExtra("format", selectedInstrument.getData().getFormat());
                     i.putExtra("channel", selectedInstrument.getData().getChannel());
 
@@ -148,6 +149,7 @@ public class DashboardScreen extends Fragment {
 
                 selectedInstrument.getData().setName(data.getStringExtra("name"));
                 selectedInstrument.getData().setAbbrev(data.getStringExtra("abbrev"));
+                selectedInstrument.getData().setBufferSize(data.getIntExtra("buffer_size", 20));
                 selectedInstrument.getData().setIndex(data.getIntExtra("channel", 0));
                 selectedInstrument.getData().setFormat(data.getIntExtra("format", 0));
 

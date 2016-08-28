@@ -11,7 +11,9 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DataStreamDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+
+    //v2: added color and buffer size
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "DataStreamDb.db";
     public static final String TABLE_NAME = "data_stream";
 
@@ -22,7 +24,7 @@ public class DataStreamDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_NAME +
-                    "(id INTEGER PRIMARY KEY, name TEXT, abbrev TEXT, format INTEGER, channel INTEGER)");
+                    "(id INTEGER PRIMARY KEY, name TEXT, abbrev TEXT, format INTEGER, channel INTEGER, buffer_size INTEGER, color INTEGER)");
     }
 
     /**
@@ -38,6 +40,9 @@ public class DataStreamDbHelper extends SQLiteOpenHelper {
         contentValues.put("abbrev", stream.getAbbrev());
         contentValues.put("format", stream.getFormat());
         contentValues.put("channel", stream.getChannel());
+        contentValues.put("buffer_size", stream.getBufferSize());
+        contentValues.put("color", stream.getData().getColor());
+
         db.replace(TABLE_NAME, null, contentValues);
     }
 
@@ -62,8 +67,10 @@ public class DataStreamDbHelper extends SQLiteOpenHelper {
         String abbrev = c.getString(c.getColumnIndex("abbrev"));
         Integer format = c.getInt(c.getColumnIndex("format"));
         Integer channel = c.getInt(c.getColumnIndex("channel"));
+        Integer bufferSize = c.getInt(c.getColumnIndex("buffer_size"));
+        Integer color = c.getInt(c.getColumnIndex("color"));
 
-        DataStream stream = new DataStream(name, abbrev, channel, format, 1000, id);
+        DataStream stream = new DataStream(name, abbrev, channel, format, 1000, id, bufferSize, color);
         return stream;
     }
 

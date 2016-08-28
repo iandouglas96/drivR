@@ -21,6 +21,7 @@ import java.util.ArrayList;
 public class InstrumentSettingsActivity extends Activity {
     EditText instrumentName;
     EditText instrumentAbbrev;
+    EditText instrumentBufferSize;
     Spinner instrumentFormat;
     Spinner instrumentChannel;
 
@@ -35,6 +36,7 @@ public class InstrumentSettingsActivity extends Activity {
 
         instrumentName = (EditText) findViewById(R.id.instrument_name);
         instrumentAbbrev = (EditText) findViewById(R.id.instrument_abbrev);
+        instrumentBufferSize = (EditText) findViewById(R.id.instrument_buffer_size);
 
         instrumentFormat = (Spinner) findViewById(R.id.instrument_format);
         ArrayAdapter<CharSequence> formatAdapter = ArrayAdapter.createFromResource(this, R.array.formatting_array, android.R.layout.simple_spinner_item);
@@ -49,6 +51,7 @@ public class InstrumentSettingsActivity extends Activity {
         Intent i = getIntent();
         instrumentName.setText(i.getStringExtra("name"));
         instrumentAbbrev.setText(i.getStringExtra("abbrev"));
+        instrumentBufferSize.setText(i.getStringExtra("buffer_size"));
         instrumentFormat.setSelection(i.getIntExtra("format", 0));
         instrumentChannel.setSelection(i.getIntExtra("channel", 0));
 
@@ -59,6 +62,12 @@ public class InstrumentSettingsActivity extends Activity {
                 Intent i = new Intent();
                 i.putExtra("name", instrumentName.getText().toString());
                 i.putExtra("abbrev", instrumentAbbrev.getText().toString());
+                try {
+                    i.putExtra("buffer_size", Integer.parseInt(instrumentBufferSize.getText().toString()));
+                } catch (NumberFormatException nfe) {
+                    //Invalid, put default (for now)
+                    i.putExtra("buffer_size", 20);
+                }
                 i.putExtra("format", instrumentFormat.getSelectedItemPosition());
                 i.putExtra("channel", instrumentChannel.getSelectedItemPosition());
 
