@@ -62,7 +62,7 @@ public class BluetoothService extends Service {
                         for (int i = 0; i < bytesAvailable; i++) {
                             //Check if we have a termination character
                             byte b = packetBytes[i];
-                            if (b == 13) {
+                            if (b == 'D' && readBufferPosition != 0) {
                                 //We have a new line, dump the buffer
                                 byte[] encodedBytes = new byte[readBufferPosition];
                                 System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
@@ -76,9 +76,10 @@ public class BluetoothService extends Service {
                                     }
                                 };
                                 handler.post(sendData);
-                            } else {
-                                readBuffer[readBufferPosition++] = b;
                             }
+
+                            //Add character to buffer
+                            readBuffer[readBufferPosition++] = b;
                         }
                     }
                 } catch (Exception e) {
@@ -174,6 +175,9 @@ public class BluetoothService extends Service {
         //Parse message from OBDIIC&C
         //Remove leading characters
         data = data.replace("DATA,TIME,", "");
+        //Remove any control characters
+        data = data.replace("\n", "");
+        data = data.replace("\r", "");
         String[] dataArr = data.split(",");
 
         ArrayList<Integer> parsedArr = new ArrayList<Integer>();
