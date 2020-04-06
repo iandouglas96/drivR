@@ -1,7 +1,7 @@
 # drivR
 Android App to read from the OBDIIC&amp;C sensor for the Honda Insight.
 
-## WARNING: This project is very alpha and under current development
+## WARNING: This project is very alpha and no longer under current development
 Also, I do not yet have an OBDIIC&C (it's on order), so this code is based around the documented logging specification for the board, and not yet tested.  If you have an actual OBDIIC&C and would like to test in the meantime, please let me know (iandouglas96@gmail.com)!
 
 ## Requirements
